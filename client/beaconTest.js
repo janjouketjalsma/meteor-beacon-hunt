@@ -18,8 +18,8 @@ Template.beaconTest.helpers({
   'beaconCalculation': function(){
     if(Meteor.isCordova){
       return {
-        'beaconInRange': Template.instance().beaconInRange,
-        'beaconDistance': Template.instance().beaconDistance
+        'beaconInRange': Template.instance().beaconInRange.get(),
+        'beaconDistance': Template.instance().beaconDistance.get()
       }
     }else{
       return {
@@ -30,34 +30,69 @@ Template.beaconTest.helpers({
 });
 
 Template.beaconTest.onCreated(function(){
+   const beacons = [
+    {
+      identifier: "Big",
+      uuid: "C3EFA9AF-5CC0-4906-B952-F5B15D428D43"
+    },
+    {
+      identifier: "Bed",
+      uuid: "D0D3FA86-CA76-45EC-9BD9-6AF428C8C61F"
+    },
+    {
+      identifier: "Fridge",
+      uuid: "D0D3FA86-CA76-45EC-9BD9-6AF4EB014D04"
+    },
+    {
+      identifier: "Dog",
+      uuid: "D0D3FA86-CA76-45EC-9BD9-6AF4BBEBADDD"
+    }
+  ];
 
   if(Meteor.isCordova){
     /**
     ** Collect beacon updates
     **/
-    //Init our beacon group
-    this.beaconRegion = new ReactiveBeaconRegion({
-      identifier: "Big",
-      uuid: "C3EFA9AF-5CC0-4906-B952-F5B15D428D43"
+    //Init our beacon regions
+    const beaconRegions = beacons.map((beacon) => {
+      let region = new ReactiveBeaconRegion({
+        identifier: beacon.identifier,
+        uuid: beacon.uuid
+      });
+
+      let regionByUuid = {
+        uuid: beacon.uuid,
+        region
+      };
+
+      return regionByUuid;
     });
 
     //This will hold updates from the beacons
-    this.beaconUpdates = [];
-
-    //Autorun our update code
-    let self=this
-    this.autorun(function () {
-
-      //Watch for a beaconResponse;
-      let beaconResponse = self.beaconRegion.getBeaconRegion();
-      //If we have a response push it to the beaconUpdates array, we will use this later in an interval
-      self.beaconUpdates.push(beaconResponse);
-      //Only keep the last 5 updates
-      if(self.beaconUpdates.length > 5){
-        self.beaconUpdates.shift();
-      }
+    const beaconUpdates = {};
+    _.each(beacons,(beacon)=>{
+      //Create an empty array in beaconUpdates for every beacon
+      beaconUpdates[beacon.identifier]=[];
     });
 
+    //Respond to beacon changes (for every region)
+    _.each(beaconRegions,(thisRegion)=>{
+
+      //We need autorun to monitor for the changes in the reactive variable
+      this.autorun(() => {
+
+        //Watch for a beaconResponse
+        let beaconResponse = thisRegion.region.getBeaconRegion();
+        //If we have a response push it to the beaconUpdates array, we will use this later in an interval
+        beaconUpdates[thisRegion.uuid].push(beaconResponse);
+        //Only keep the last 5 updates
+        if(beaconUpdates[thisRegion.uuid].length > 5){
+          beaconUpdates[thisRegion.uuid].shift();
+        }
+
+      });
+
+    });
     /**
     ** Automated UI position calculator
     **/
@@ -66,8 +101,11 @@ Template.beaconTest.onCreated(function(){
     this.beaconInRange = new ReactiveVar('beaconInRange');
 
     //Calculate the position to be reported to the client
-    setInterval(function(){
-      let updates = this.beaconUpdates;
+    setInterval(()=>{
+
+      //CHANGE THIS SO IT DOES NOT ONLY WORK FOR THE FIRST BEACON
+
+      let updates = beaconUpdates[0];
 
       //Get last update from updates array
       let lastUpdate = updates[updates.length - 1];
