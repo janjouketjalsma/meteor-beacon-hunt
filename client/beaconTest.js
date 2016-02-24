@@ -1,6 +1,20 @@
+$(function() {
+
+    var $rad = $('#rad'),
+        d = 0;
+
+    (function rotate() {
+        $rad.css({ transform: 'rotate('+ d +'deg)'}); // apply CSS3
+        setTimeout(function() {
+            ++d;         // next degree
+            rotate();    // recall function
+        }, 25);          // every 25ms
+    })();                // 1st start
+
+});
+
 Template.beaconTest.helpers({
   'beacons': function(){
-
 
     if(Meteor.isCordova){
       let beaconRegion = Template.instance().beaconRegion.get();
@@ -18,15 +32,18 @@ Template.beaconTest.helpers({
   'beaconCalculation': function(){
     if(Meteor.isCordova){
       return {
-        'beaconInRange': Template.instance().beaconInRange,
-        'beaconDistance': Template.instance().beaconDistance
+        'beaconInRange': Template.instance().beaconInRange.get(),
+        'beaconDistance': Template.instance().beaconDistance.get()
       }
     }else{
       return {
         identifier: "Not on cordova!"
       }
     }
-  }
+},
+   'hideClass': function() {
+      return (!Template.instance.beaconInRange.get()) ? "hidden" : "";
+   }
 });
 
 Template.beaconTest.onCreated(function(){
@@ -64,9 +81,11 @@ Template.beaconTest.onCreated(function(){
     //Init our reactivedict (stores values we will show to the UI)
     this.beaconDistance = new ReactiveVar('beaconDistance');
     this.beaconInRange = new ReactiveVar('beaconInRange');
+    this.beaconDistance.set(undefined);
+    this.beaconInRange.set(false);
 
     //Calculate the position to be reported to the client
-    setInterval(function(){
+    Meteor.setInterval( () => {
       let updates = this.beaconUpdates;
 
       //Get last update from updates array
@@ -75,13 +94,15 @@ Template.beaconTest.onCreated(function(){
       this.beaconInRange.set(lastUpdate.inRegion);
       //Check if the beacon is currently in range
       if(!lastUpdate.inRegion){
-        this.beaconInRange.set(undefined);
+         this.beaconInRange.set(false);
+         this.beaconDistance.set(undefined);
       }else{
-        var distances = _.map(updates, function(item){return item.beacons[0].accuracy});
-        var validList = _.filter(distances, function(item){ if(item>0) return item; });
-        var average = _.reduce(validList, function(sum,item){ return sum + item })/validList.length;
+        let distances = _.map(updates, function(item){return item && item.beacons[0] && item.beacons[0].accuracy});
+        let validList = _.filter(distances, function(item){ if(item && item>0) return item; });
+        let average = _.reduce(validList, function(sum,item){ return sum + item })/validList.length;
         this.beaconDistance.set(average);
       }
     }, 2000);
-  }
+
+}
 });

@@ -1,0 +1,29 @@
+#radar{
+  position:relative;
+  width:321px;
+  height:321px;
+  background:#222 url(img/radarbackground.png);
+  border-radius:320px;
+}
+#rad{
+  position:absolute;
+  width:321px;
+  height:321px; background:url(img/radarshadow.png);
+}
+
+.beaconBase {
+    border-radius: 50%;
+    position:relative;
+    top:-100px;
+    left:100px;
+}
+
+.beaconFar {
+    width: 20px;
+    height: 20px;
+    background: rgb(0, 255, 0);
+}
+
+.hidden {
+   display: none;
+}
