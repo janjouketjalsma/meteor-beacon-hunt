@@ -4,6 +4,7 @@
 	color:white;
 	background-repeat: no-repeat;
 	background-size: contain;
+	background-position:center center;
 }
 
 .beacon.icymarshmallow{
@@ -18,8 +19,8 @@
 	background-image: url("/beacons/sticker_mintcocktail.svg");
 }
 
-.beacon.bigbeacon:after{
-	background-image: url("/beacons/ico-beacon.svg");
+.beacon.ice{
+	background-image: url("/beacons/beacon_ice.png");
 }
 
 .beacon.fridge:after{
