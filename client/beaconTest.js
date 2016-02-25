@@ -49,6 +49,32 @@ Template.beaconTest.onCreated(function(){
    }
   ];
 
+  //Calculate our target combination (for gameplay)
+  let targetCombination = [3,2,1,4].map((beaconIndex)=>{
+    return beacons[beaconIndex-1].uuid;
+  });
+
+  //Store the unlocked status of the beacon
+  //SOME REACTIVE VAR
+
+  //Function that should be called on every update of a beacon
+  let currentCombination = [];
+  unLockTheBox = (uuid,distance)=>{
+    const found = 1;
+    if(distance < 1){
+      //You found a beacon!
+
+      //Add this beacon to the combination lock
+      currentCombination.push(uuid);
+      //This lock only has four positions so remove the first one if there is a longer combination
+      if(currentCombination.length > 4){
+        currentCombination.shift();
+      }
+      //Check if the combination is correct!
+
+    }
+  }
+
   if(Meteor.isCordova){
     /**
     ** Collect beacon updates
