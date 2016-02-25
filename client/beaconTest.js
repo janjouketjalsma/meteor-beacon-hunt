@@ -45,7 +45,7 @@ Template.beaconTest.onCreated(function(){
     */
 
     //STEP 1 Calculate our target order
-    let targetOrder = [1,0,2,3];//SCRAMBLING FUNCTION HERE
+    let targetOrder = [0,1,2,3,4];
 
     //STEP 2 Activate the first beacon
     let currentTargetIndex = -1;
@@ -72,7 +72,7 @@ Template.beaconTest.onCreated(function(){
 
          //Watch for a beaconResponse
          let beaconResponse = currentRegion.getBeaconRegion();
-         //console.log('[autorun] new beacon message '+JSON.stringify(beaconResponse));
+         console.log('[autorun] new beacon message ');//+JSON.stringify(beaconResponse));
 
          //If we have a response push it to the beaconUpdates array, we will use this later in an interval
          beaconUpdates.push(beaconResponse);
@@ -114,11 +114,11 @@ Template.beaconTest.onCreated(function(){
          currentGame.currentBeacon = currentBeacon.identifier;
 
          //Check if the beacon is currently in range
-         if(!lastUpdate.inRegion){
+         if(lastUpdate && !lastUpdate.inRegion){
            //Beacon not in range, set the distance to really far
            //currentGame.beacons[currentBeacon.uuid] = {distance: 100};
            currentGame.beacons = {distance: 100, isFound: false};
-           beaconUpdates = [];//Clear the updates array
+           //beaconUpdates = [];//Clear the updates array
          }
          else {
            var distances = _.map(updates, function(item){return _.last(item.beacons).accuracy});
@@ -136,10 +136,14 @@ Template.beaconTest.onCreated(function(){
              beaconUpdates=[];
 
              if(currentGame.beaconsFound >= 4){
+                console.log('Removing timer function');
                 currentGame.challangeCompleted = true;
                 Meteor.clearInterval(timer);
             }
-            currentRegion = getRegion(currentGame.beaconsFound);
+            else {
+               console.log('Switching to next region');
+               currentRegion = getRegion(currentGame.beaconsFound);
+            }
           }
          }
          this.game.set(currentGame);
