@@ -63,7 +63,7 @@ Template.beaconTest.onCreated(function(){
         identifier: currentBeacon.identifier,
         uuid: currentBeacon.uuid
      });
-
+     return region;
     }
 
     //Set the initial region
