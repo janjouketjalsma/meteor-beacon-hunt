@@ -1,8 +1,9 @@
 <template name="game">
-	<div class="row">
-		{{>beacon}}
-	</div>
-	<div class="row">
+	<div class="col-xs-12" id="radarContainer">
 		{{> radar}}
+	</div>
+	<div class="col-xs-12 pre" id="hints">{{hint}}</div>
+	<div class="col-xs-12" id="beacons">
+		{{>beacon}}
 	</div>
 </template>

@@ -1,6 +1,5 @@
 .splash{
 	padding-top: 2vh;
-	background-color: rgb(213, 177, 120);;
 	position: absolute;
 	top:0;
 	left:0;
@@ -10,6 +9,8 @@
 	width: 100vw;
 	z-index:9000;
 	vertical-align: middle;
+		background-color: rgb(213, 177, 120);;
+
 	background-image: url(img/bg_map.png);
 	background-size: cover;
 	color:white;
@@ -28,7 +29,8 @@
 	background-color: rgba(213, 177, 120, 0.6);
 	margin-top: -2vh;
 	padding-top: 5vh;
-	height: 90vh;
+	padding-left: 5vw;
+	padding-right: 5vw;
 	font-size: 1em;
 	padding-left: 1em;
 	padding-right: 1em;

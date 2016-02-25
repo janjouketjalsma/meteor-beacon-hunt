@@ -1,0 +1,14 @@
+#hints{
+	height: 50vh;
+	width: 100vw;
+	padding:1em;
+	background-color: rgba(213, 177, 120, 0.6);
+	color:white;
+}
+#beacons{
+	height: 10vh;
+}
+
+.pre {
+  white-space: pre;
+}

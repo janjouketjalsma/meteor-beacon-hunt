@@ -1,10 +1,22 @@
 <template name="beacon">
-
-<div class="beacon ice col-xs-3"></div>
-
-<div class="beacon blueberrypie fridge col-xs-3"></div>
-
-<div class="beacon icymarshmallow dog col-xs-3"></div>
-
-<div class="beacon mintcocktail bed col-xs-3"></div>
+	{{#if iceFound}}
+		<div class="beacon ice col-xs-3"></div>
+	{{else}}
+		<div class="col-xs-3"></div>
+	{{/if}}
+	{{#if fridgeFound}}
+		<div class="beacon blueberrypie fridge col-xs-3"></div>
+	{{else}}
+		<div class="col-xs-3"></div>
+	{{/if}}
+	{{#if dogFound}}
+		<div class="beacon icymarshmallow dog col-xs-3"></div>
+	{{else}}
+		<div class="col-xs-3"></div>
+	{{/if}}
+	{{#if bedFound}}
+		<div class="beacon mintcocktail bed col-xs-3"></div>
+	{{else}}
+		<div class="col-xs-3"></div>
+	{{/if}}
 </template>

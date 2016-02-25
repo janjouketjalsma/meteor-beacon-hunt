@@ -1,6 +1,8 @@
-#radarcontainer{
-    width:50vw;
-  height:50vw;
+#radarContainer{
+  margin-left: 20vw;
+    width:100vw;
+    height:50vw;
+    overflow: hidden;
 }
 
 #radar{
@@ -12,26 +14,26 @@
   border-radius:320px;
 }
 #rad{
-  position:absolute;
+   position:absolute;
     width:50vw;
-  height:50vw;
-  background:url(img/radarshadow.png);
+    height:50vw;
+    background:url(img/radarshadow.png);
     background-size: contain;
 }
 
 .beaconDot.spot{
-    top:-55%;
-    left:45%;
+top:-52%;
+left:23%;
 }
 
 .beaconDot.near {
     top:-30%;
-    left:35%;
+    left:20%;
 }
 
 .beaconDot.far {
-    top:-25%;
-    left:15%;
+        top:-10%;
+    left:10%;
 }
 
 .beaconDot {

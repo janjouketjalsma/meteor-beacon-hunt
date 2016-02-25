@@ -6,12 +6,24 @@
 	-moz-user-select:none;
 	-ms-user-select:none;
 	user-select:none;
-
+    overflow: hidden;
 }
 
-body {
-   background: black;
+body { 
+    overflow: hidden;
+    width: 100vw;
+	height: 100vh;
 }
+
+
+#game {
+	width: 100vw;
+	height: 100vh;
+	background-color: rgb(213, 177, 120);;
+	background-image: url(img/bg_map.png);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;}
 
 .beaconTestDiv {
    color: white;
