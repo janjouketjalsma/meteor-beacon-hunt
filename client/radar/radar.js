@@ -13,3 +13,14 @@ $(function() {
 
 });
 };
+
+Template.radar.helpers({
+	distance:function () {
+		if (Session.get('distance') < 2)
+			return 'spot'
+		else if (Session.get('distance')<7)
+			return 'near'
+		else 
+			return "far";
+	}
+})

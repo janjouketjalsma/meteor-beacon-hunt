@@ -1,3 +1,12 @@
+Session.set('distance', 20);
+
+
+function _isFound(distance) {
+  Session.set('distance', distance);
+   if (distance < 1) return true;
+   else return false;
+}
+
 Template.beaconTest.helpers({
   'gameStatus':function(){
     return Template.instance().game.get();
@@ -5,6 +14,7 @@ Template.beaconTest.helpers({
 });
 
 Template.beaconTest.onCreated(function(){
+  self=this;
   if(Meteor.isCordova){
     //Define the beacons we have
      const beacons = [
@@ -29,93 +39,126 @@ Template.beaconTest.onCreated(function(){
     //GAMEPLAY functions
     /*
     1. Generate a beacon order
+
     2. Activate current beacon region (from the order)
+
     3. Wait for beacon to be found and report distance while still looking
       DATA STRUCTURE: {challangeCompleted: boolean, beacons: [{distance, isFound},{distance, isFound},{distance, isFound},{distance, isFound}]}
+
     4. When beacon is found, go to next beacon (step two)
     */
 
     //STEP 1 Calculate our target order
-    let targetOrder = [1,2,3,4];//SCRAMBLING FUNCTION HERE
+    let targetOrder = [0,1,2,3,4];
 
     //STEP 2 Activate the first beacon
     let currentTargetIndex = -1;
 
-    let currentBeacon;
-    let nextBeacon = function(){
-      let nextTargetIndex = currentTargetIndex +1;
-      let nextBeacon = beacons[targetOrder[nextTargetIndex]];
-      return (nextBeacon) ? nextBeacon : beacons[0];
-    };
+    currentBeacon = {};
 
-    let nextRegion = function(){
-      currentBeacon = nextBeacon();
+    getRegion = function(beaconIndex){
+      currentBeacon = beacons[targetOrder[beaconIndex]];
       let region = new ReactiveBeaconRegion({
         identifier: currentBeacon.identifier,
         uuid: currentBeacon.uuid
-      });
-      return region;
+     });
+     return region;
     }
 
     //Set the initial region
-    currentRegion = nextRegion();
+    currentRegion = getRegion(0);
 
     //Create a var for the updates
-    let beaconUpdates = [];
+    beaconUpdates = [];
 
     //Monitor the next beacon
-    this.autorun(() => {
+    self.autorun(function(){
 
-      //Watch for a beaconResponse
-      let beaconResponse = currentRegion.getBeaconRegion();
+         //Watch for a beaconResponse
+         let beaconResponse = currentRegion.getBeaconRegion();
+         console.log('[autorun] new beacon message ');//+JSON.stringify(beaconResponse));
 
-      //If we have a response push it to the beaconUpdates array, we will use this later in an interval
-      beaconUpdates.push(beaconResponse);
+         //If we have a response push it to the beaconUpdates array, we will use this later in an interval
+         beaconUpdates.push(beaconResponse);
 
-      //Only keep the last 5 updates
-      if(beaconUpdates.length > 5){
-        beaconUpdates.shift();
-      }
-      console.log('beaconUpdates: '+JSON.stringify(beaconUpdates));
+         //Only keep the last 5 updates
+         if(beaconUpdates.length > 5){
+           beaconUpdates.shift();
+         }
 
     });
-  };
+    /**
+    ** STEP 3: UI position and achievement calculator
+    ** returns : {challangeCompleted: boolean, beacons: {uuid:{distance, isFound},anotheruuid: {distance, isFound}}};
+    **/
+    //Init our reactivedict (stores values we will show to the UI)
+    this.game = new ReactiveVar({
+      challangeCompleted : false,
+      beacons: {},
+      currentBeacon: "None",
+      beaconsFound: 0
+    });
 
-  /**
-  ** STEP 3: UI position and achievement calculator
-  ** returns : {challangeCompleted: boolean, beacons: {uuid:{distance, isFound},anotheruuid: {distance, isFound}}};
-  **/
-  //Init our reactivedict (stores values we will show to the UI)
-  this.game = new ReactiveVar({
-    challangeCompleted : false,
-    beacons: {}
-  });
+    this.beaconInRange = new ReactiveVar();
 
-  this.beaconInRange = new ReactiveVar();
+    //Calculate the position to be reported to the client
+    let timer = Meteor.setInterval(()=>{
+      try{
+         //console.log('[interval]  calculating reactiveVars');
+         let updates = beaconUpdates;
+         console.log(updates);
+         //We have currentBeacon here
 
-  //Calculate the position to be reported to the client
-  Meteor.setInterval(()=>{
-    let updates = beaconUpdates;
-    //We have currentBeacon here
+         //Get last update from updates array
+         let lastUpdate = _.last(updates);
+         if (!lastUpdate) lastUpdate = {lastUpdate: {inRegion:false}};
 
-    //Get last update from updates array
-    let lastUpdate = _.last(updates);
-    if (!lastUpdate) lastUpdate = {lastUpdate: {inRegion:false}};
+         let currentGame = this.game.get();
 
-    let currentGame = this.game.get();
+         currentGame.currentBeacon = currentBeacon.identifier;
 
-    //Check if the beacon is currently in range
-    if(!lastUpdate.inRegion){
-      //Beacon not in range, set the distance to really far
-      currentGame.beacons[currentBeacon.uuid] = {distance: 100};
-      updates = [];//Clear the updates array
-    }else{
-      var distances = _.map(updates, function(item){return item.beacons[0].accuracy});
-      var validList = _.filter(distances, function(item){ if(item>0) return item; });
-      var average = _.reduce(validList, function(sum,item){ return sum + item })/validList.length;
-      currentGame.beacons[currentBeacon.uuid] = {distance: avarage};
-    }
+         //Check if the beacon is currently in range
+         if(lastUpdate && !lastUpdate.inRegion){
+           //Beacon not in range, set the distance to really far
+           //currentGame.beacons[currentBeacon.uuid] = {distance: 100};
+           currentGame.beacons = {distance: 100, isFound: false};
+           //beaconUpdates = [];//Clear the updates array
+         }
+         else {
+           var distances = _.map(updates, function(item){return _.last(item.beacons).accuracy});
+           var validList = _.filter(distances, function(item){ if(item>0) return item; });
+           var average = _.reduce(validList, function(sum,item){ return sum + item })/validList.length;
+           //currentGame.beacons[currentBeacon.uuid] = {
+           currentGame.beacons = {
+              distance: average,
+              isFound: _isFound(average)
+           };
 
-    this.game.set(currentGame);
-  }, 2000);
+           if(_isFound(average)){
+             //we have found one beacon
+             currentGame.beaconsFound ++;
+             beaconUpdates=[];
+
+             Session.set('found', {ice:true,dog:false,fridge:false,bed:false});
+
+             if(currentGame.beaconsFound >= 4){
+                console.log('Removing timer function');
+                currentGame.challangeCompleted = true;
+                Meteor.clearInterval(timer);
+            }
+            else {
+               console.log('Switching to next region');
+               currentRegion = getRegion(currentGame.beaconsFound);
+            }
+          }
+         }
+         this.game.set(currentGame);
+      }
+      catch(e) {
+         console.log('[interval] Error: '+String(e));
+      }
+
+    }, 2000);
+  } // end of isCordova
+
 });
