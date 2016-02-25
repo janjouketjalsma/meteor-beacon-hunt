@@ -10,29 +10,29 @@ App.info({
 });
 
 App.launchScreens({
-  'iphone': 'splash/splash.png',
-  'iphone_2x':'splash/splash.png',
-'iphone5':'splash/splash.png',
-  'iphone6':'splash/splash.png',
-'iphone6p_portrait':'/splash/splash.png',
-  'ipad_portrait': 'splash/splash.png',
+  'iphone': 'resources/splash/splash.png',
+  'iphone_2x':'resources/splash/splash.png',
+'iphone5':'resources/splash/splash.png',
+  'iphone6':'resources/splash/splash.png',
+'iphone6p_portrait':'resources/splash/splash.png',
+  'ipad_portrait': 'resources/splash/splash.png',
   'android_ldpi_portrait': 'resources/splash/splash.png',
-'android_mdpi_portrait': 'splash/splash.png',
-'android_hdpi_portrait': 'splash/splash.png',
-'android_xhdpi_portrait': 'splash/splash.png',
+'android_mdpi_portrait': 'resources/splash/splash.png',
+'android_hdpi_portrait': 'resources/splash/splash.png',
+'android_xhdpi_portrait': 'resources/splash/splash.png',
 });
 
 // Set up resources such as icons and launch screens.
 App.icons({
-  'iphone': 'icons/beacons.png',
-  'iphone_2x': 'icons/beacons.png',
-  'iphone_3x': 'icons/beacons.png',
-  'ipad': 'icons/beacons.png',
-  'ipad_2x': 'icons/beacons.png',
-  'android_ldpi': 'icons/beacons.png',
-  'android_mdpi': 'icons/beacons.png',
-  'android_hdpi': 'icons/beacons.png',
-  'android_xhdpi': 'icons/beacons.png'
+  'iphone': 'resources/icons/beacons.png',
+  'iphone_2x': 'resources/icons/beacons.png',
+  'iphone_3x': 'resources/icons/beacons.png',
+  'ipad': 'resources/icons/beacons.png',
+  'ipad_2x': 'resources/icons/beacons.png',
+  'android_ldpi': 'resources/icons/beacons.png',
+  'android_mdpi': 'resources/icons/beacons.png',
+  'android_hdpi': 'resources/icons/beacons.png',
+  'android_xhdpi': 'resources/icons/beacons.png'
 });
 
 

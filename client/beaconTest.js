@@ -45,7 +45,7 @@ Template.beaconTest.onCreated(function(){
     let nextBeacon = function(){
       let nextTargetIndex = currentTargetIndex +1;
       let nextBeacon = beacons[targetOrder[nextTargetIndex]];
-      return (nextBeacon ? nextBeacon : beacons[0];
+      return (nextBeacon) ? nextBeacon : beacons[0];
     };
 
     let nextRegion = function(){
@@ -87,8 +87,8 @@ Template.beaconTest.onCreated(function(){
   **/
   //Init our reactivedict (stores values we will show to the UI)
   this.game = new ReactiveVar({
-    challangeCompleted : false;
-    beacons: {};
+    challangeCompleted : false,
+    beacons: {}
   });
 
   this.beaconInRange = new ReactiveVar();

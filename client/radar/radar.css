@@ -1,25 +1,43 @@
+#radarcontainer{
+    width:50vw;
+  height:50vw;
+}
+
 #radar{
   position:relative;
-  width:321px;
-  height:321px;
+  width:50vw;
+  height:50vw;
   background:#222 url(img/radarbackground.png);
+  background-size: contain;
   border-radius:320px;
 }
 #rad{
   position:absolute;
-  width:321px;
-  height:321px; background:url(img/radarshadow.png);
+    width:50vw;
+  height:50vw;
+  background:url(img/radarshadow.png);
+    background-size: contain;
 }
 
-.beaconBase {
-    border-radius: 50%;
-    position:relative;
-    top:-100px;
-    left:100px;
+.beaconDot.spot{
+    top:-55%;
+    left:45%;
+}
+
+.beaconDot.near {
+    top:-30%;
+    left:35%;
+}
+
+.beaconDot.far {
+    top:-25%;
+    left:15%;
 }
 
 .beaconDot {
-    width: 20px;
-    height: 20px;
+    width: 5vw;
+    height: 5vw;
     background: rgb(0, 255, 0);
+    border-radius: 50%;
+    position:relative;
 }
