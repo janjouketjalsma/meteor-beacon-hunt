@@ -5,6 +5,8 @@ function _isFound(distance) {
 
 Template.beaconTest.helpers({
   'gameStatus':function(){
+    console.log("outputting gamestatus");
+    console.log(Template.instance().game.get());
     return Template.instance().game.get();
   }
 });
