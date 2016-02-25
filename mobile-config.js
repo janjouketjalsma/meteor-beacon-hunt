@@ -37,6 +37,6 @@ App.icons({
 
 
 // Set PhoneGap/Cordova preferences
-App.setPreference('BackgroundColor', '0xff0000ff');
+App.setPreference('BackgroundColor', '0x2021460');
 App.setPreference('HideKeyboardFormAccessoryBar', true);
 App.setPreference('Orientation', 'portrait');
