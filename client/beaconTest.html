@@ -1,8 +1,12 @@
 <template name="beaconTest">
   Template has loaded... great... here
+  <p>You are now looking for {{gameStatus.currentBeacon}}</p>
+
   {{#if gameStatus.challangeCompleted}}COMPLETED{{else}}NOT YET{{/if}}
    distance {{gameStatus.beacons.distance}}
    {{#if gameStatus.beacons.isFound}}
       You found it!
    {{/if}}
+   <br/>
+   You found {{gameStatus.beaconsFound}} beacons
 </template>
