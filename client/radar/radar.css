@@ -22,8 +22,8 @@
 }
 
 .beaconDot.spot{
-top:-52%;
-left:23%;
+top:-55%;
+left:25%;
 }
 
 .beaconDot.near {
@@ -32,8 +32,8 @@ left:23%;
 }
 
 .beaconDot.far {
-        top:-10%;
-    left:10%;
+        top:-15%;
+    left:15%;
 }
 
 .beaconDot {
