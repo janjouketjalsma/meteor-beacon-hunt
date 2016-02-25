@@ -111,7 +111,7 @@ Template.beaconTest.onCreated(function(){
     Meteor.setInterval(()=>{
       try{
          console.log('[interval]  calculating reactiveVars');
-         let updates = this.beaconUpdates;
+         let updates = beaconUpdates;
          //We have currentBeacon here
 
          //Get last update from updates array

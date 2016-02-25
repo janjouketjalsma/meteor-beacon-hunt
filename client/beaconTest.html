@@ -1,11 +1,12 @@
 <template name="beaconTest">
-  Beacon region identifier: {{beacons.identifier}}<br/>
-  {{#each beacons.beacons}}
-    Beacon proximity: {{proximity}}<br/>
-    Beacon accuracy: {{accuracy}}<br/>
+  {{#if gameStatus.challangeCompleted}}
+    Challenge completed.... Yeah!
+    <br/>
+  {{/if}}
+  {{#each gameStatus.beacons}}
+    Beacon distance: {{distance}}<br/>
+    {{#if isFound}}
+      You found the beacon!
+    {{/if}}<br/>
   {{/each}}
-  <p>
-    Calculated visibility: {{beaconCalculation.beaconInRange}}<br/>
-    Calculated distance in meters: {{beaconCalculation.beaconDistance}}
-  </p>
 </template>
