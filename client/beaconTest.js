@@ -54,8 +54,8 @@ Template.beaconTest.onCreated(function(){
     return beacons[beaconIndex-1].uuid;
   });
 
-  //Store the unlocked status of the beacon
-  //SOME REACTIVE VAR
+  //Store the unlocked status of the beacon (default is locked)
+  this.boxLocked = new ReactiveVar(true);
 
   //Function that should be called on every update of a beacon
   let currentCombination = [];
@@ -71,7 +71,12 @@ Template.beaconTest.onCreated(function(){
         currentCombination.shift();
       }
       //Check if the combination is correct!
-
+      if(currentCombination === targetCombination){
+        //Correct combination so box is no longer locked!
+        this.boxLocked.set(false);
+      }else{
+        //Do nothing, combination is not ok
+      }
     }
   }
 
@@ -106,32 +111,30 @@ Template.beaconTest.onCreated(function(){
 
       //We need autorun to monitor for the changes in the reactive variable
       this.autorun(() => {
+          try{
+            //Watch for a beaconResponse
+            let beaconResponse = thisRegion.region.getBeaconRegion();
+            //If we have a response push it to the beaconUpdates array, we will use this later in an interval
+            beaconUpdates[thisRegion.uuid].push(beaconResponse);
+            //Only keep the last 5 updates
+            if(beaconUpdates[thisRegion.uuid].length > 5){
+              beaconUpdates[thisRegion.uuid].shift();
+            }
 
-         try{
-        //Watch for a beaconResponse
-        let beaconResponse = thisRegion.region.getBeaconRegion();
-        //If we have a response push it to the beaconUpdates array, we will use this later in an interval
-        beaconUpdates[thisRegion.uuid].push(beaconResponse);
-        //Only keep the last 5 updates
-        if(beaconUpdates[thisRegion.uuid].length > 5){
-          beaconUpdates[thisRegion.uuid].shift();
-        }
-
-        console.log('beaconUpdates: '+JSON.stringify(beaconUpdates));
-      }
-      catch(error) {
-         console.log('error: '+error);
-      }
-
-     });
+            console.log('beaconUpdates: '+JSON.stringify(beaconUpdates));
+          }
+          catch(error) {
+             console.log('error: '+error);
+          }
+        });
 
     });
     /**
     ** Automated UI position calculator
     **/
     //Init our reactivedict (stores values we will show to the UI)
-    this.beaconDistance = new ReactiveVar('beaconDistance');
-    this.beaconInRange = new ReactiveVar('beaconInRange');
+    this.beaconDistance = new ReactiveVar();
+    this.beaconInRange = new ReactiveVar();
 
     //Calculate the position to be reported to the client
     setInterval(()=>{
