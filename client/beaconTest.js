@@ -42,11 +42,11 @@ Template.beaconTest.onCreated(function(){
     {
       identifier: "Fridge",
       uuid: "D0D3FA86-CA76-45EC-9BD9-6AF4EB014D04"
-    },
+   },
     {
       identifier: "Dog",
       uuid: "D0D3FA86-CA76-45EC-9BD9-6AF4BBEBADDD"
-    }
+   }
   ];
 
   if(Meteor.isCordova){
@@ -72,7 +72,7 @@ Template.beaconTest.onCreated(function(){
     const beaconUpdates = {};
     _.each(beacons,(beacon)=>{
       //Create an empty array in beaconUpdates for every beacon
-      beaconUpdates[beacon.identifier]=[];
+      beaconUpdates[beacon.uuid]=[];
     });
 
     //Respond to beacon changes (for every region)
@@ -81,6 +81,7 @@ Template.beaconTest.onCreated(function(){
       //We need autorun to monitor for the changes in the reactive variable
       this.autorun(() => {
 
+         try{
         //Watch for a beaconResponse
         let beaconResponse = thisRegion.region.getBeaconRegion();
         //If we have a response push it to the beaconUpdates array, we will use this later in an interval
@@ -90,7 +91,13 @@ Template.beaconTest.onCreated(function(){
           beaconUpdates[thisRegion.uuid].shift();
         }
 
-      });
+        console.log('beaconUpdates: '+JSON.stringify(beaconUpdates));
+      }
+      catch(error) {
+         console.log('error: '+error);
+      }
+
+     });
 
     });
     /**
@@ -105,15 +112,17 @@ Template.beaconTest.onCreated(function(){
 
       //CHANGE THIS SO IT DOES NOT ONLY WORK FOR THE FIRST BEACON
 
-      let updates = beaconUpdates[0];
+      let updates = beaconUpdates['C3EFA9AF-5CC0-4906-B952-F5B15D428D43'];
 
       //Get last update from updates array
-      let lastUpdate = updates[updates.length - 1];
+      let lastUpdate = _.last(updates);
+      if (!lastUpdate) lastUpdate = {lastUpdate: {inRegion:false}}
       //Set the reactivevar inrange to the last updated inrange value (happens in client in realtime)
       this.beaconInRange.set(lastUpdate.inRegion);
       //Check if the beacon is currently in range
       if(!lastUpdate.inRegion){
-        this.beaconInRange.set(undefined);
+        this.beaconInRange.set(false);
+        this.beaconDistance.set(undefined);
       }else{
         var distances = _.map(updates, function(item){return item.beacons[0].accuracy});
         var validList = _.filter(distances, function(item){ if(item>0) return item; });
