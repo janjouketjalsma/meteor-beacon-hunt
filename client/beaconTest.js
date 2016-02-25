@@ -10,6 +10,7 @@ Template.beaconTest.helpers({
 });
 
 Template.beaconTest.onCreated(function(){
+  self=this;
   if(Meteor.isCordova){
     //Define the beacons we have
      const beacons = [
@@ -58,49 +59,36 @@ Template.beaconTest.onCreated(function(){
 
     let nextRegion = function(){
       currentBeacon = nextBeacon();
-      /*
       let region = new ReactiveBeaconRegion({
         identifier: currentBeacon.identifier,
         uuid: currentBeacon.uuid
      });
-     // return region
-     */
-      return this.region;
+
     }
 
     //Set the initial region
-    //currentRegion = nextRegion();
-    this.region = new ReactiveBeaconRegion({
-        identifier: "Big",
-        uuid: "C3EFA9AF-5CC0-4906-B952-F5B15D428D43"
-      });
-    //console.log('currentRegion: '+JSON.stringify(currentRegion));
-    console.log('currentRegion: '+JSON.stringify(this.region));
+    currentRegion = nextRegion();
 
     //Create a var for the updates
-    this.beaconUpdates = [];
-
-    let beaconResponse = this.region.getBeaconRegion();
-    console.log('first beacon message '+JSON.stringify(beaconResponse));
-    this.beaconUpdates.push(beaconResponse);
+    beaconUpdates = [];
 
     //Monitor the next beacon
-    this.autorun(() => {
+    self.autorun(function(){
 
       try {
          //Watch for a beaconResponse
          //let beaconResponse = currentRegion.getBeaconRegion();
-         let beaconResponse = this.region.getBeaconRegion();
+         let beaconResponse = currentRegion.getBeaconRegion();
          console.log('[autorun] new beacon message '+JSON.stringify(beaconResponse));
 
          //If we have a response push it to the beaconUpdates array, we will use this later in an interval
-         this.beaconUpdates.push(beaconResponse);
+         beaconUpdates.push(beaconResponse);
 
          //Only keep the last 5 updates
-         if(this.beaconUpdates.length > 5){
-           this.beaconUpdates.shift();
+         if(beaconUpdates.length > 5){
+           beaconUpdates.shift();
          }
-         console.log('[autorun] beaconUpdates: '+JSON.stringify(this.beaconUpdates));
+         console.log('[autorun] beaconUpdates: '+JSON.stringify(beaconUpdates));
       }
       catch(e) {
          console.log('[autorun] Error: '+String(e));
