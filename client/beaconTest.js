@@ -5,8 +5,6 @@ function _isFound(distance) {
 
 Template.beaconTest.helpers({
   'gameStatus':function(){
-    console.log("outputting gamestatus");
-    console.log(Template.instance().game.get());
     return Template.instance().game.get();
   }
 });
@@ -77,11 +75,9 @@ Template.beaconTest.onCreated(function(){
     //Monitor the next beacon
     self.autorun(function(){
 
-      try {
          //Watch for a beaconResponse
-         //let beaconResponse = currentRegion.getBeaconRegion();
          let beaconResponse = currentRegion.getBeaconRegion();
-         console.log('[autorun] new beacon message '+JSON.stringify(beaconResponse));
+         //console.log('[autorun] new beacon message '+JSON.stringify(beaconResponse));
 
          //If we have a response push it to the beaconUpdates array, we will use this later in an interval
          beaconUpdates.push(beaconResponse);
@@ -90,11 +86,6 @@ Template.beaconTest.onCreated(function(){
          if(beaconUpdates.length > 5){
            beaconUpdates.shift();
          }
-         console.log('[autorun] beaconUpdates: '+JSON.stringify(beaconUpdates));
-      }
-      catch(e) {
-         console.log('[autorun] Error: '+String(e));
-      }
 
     });
     /**
@@ -112,7 +103,7 @@ Template.beaconTest.onCreated(function(){
     //Calculate the position to be reported to the client
     Meteor.setInterval(()=>{
       try{
-         console.log('[interval]  calculating reactiveVars');
+         //console.log('[interval]  calculating reactiveVars');
          let updates = beaconUpdates;
          //We have currentBeacon here
 
@@ -126,7 +117,7 @@ Template.beaconTest.onCreated(function(){
          if(!lastUpdate.inRegion){
            //Beacon not in range, set the distance to really far
            //currentGame.beacons[currentBeacon.uuid] = {distance: 100};
-           currentGame.beacons["C3EFA9AF-5CC0-4906-B952-F5B15D428D43"] = {distance: 100};
+           currentGame.beacons = {distance: 100, isFound: false};
            updates = [];//Clear the updates array
          }
          else {
@@ -134,10 +125,14 @@ Template.beaconTest.onCreated(function(){
            var validList = _.filter(distances, function(item){ if(item>0) return item; });
            var average = _.reduce(validList, function(sum,item){ return sum + item })/validList.length;
            //currentGame.beacons[currentBeacon.uuid] = {
-           currentGame.beacons["C3EFA9AF-5CC0-4906-B952-F5B15D428D43"] = {
+           currentGame.beacons = {
               distance: average,
               isFound: _isFound(average)
            };
+
+           if(_isFound(average)){
+             currentGame.challangeCompleted = true;
+          }
          }
          this.game.set(currentGame);
       }
